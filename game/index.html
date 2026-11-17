@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ROOTLIGHT — Grow the Deep</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #14101c; height: 100%; overflow: hidden; }
+  body { display: flex; align-items: center; justify-content: center; }
+  canvas {
+    width: min(100vw, calc(100vh * 1280 / 720));
+    height: min(100vh, calc(100vw * 720 / 1280));
+    display: block; cursor: crosshair; image-rendering: auto;
+    background: #14101c;
+  }
+</style>
+</head>
+<body>
+<canvas id="game" width="1280" height="720"></canvas>
+<script type="module">
+  import { boot } from './src/main.js';
+  import { runShot } from './src/shots.js';
+  const canvas = document.getElementById('game');
+  const state = boot(canvas);
+  const params = new URLSearchParams(location.search);
+  const shot = params.get('shot');
+  if (shot) {
+    // Deterministic screenshot scene: fixed seed, fixed ticks, one render.
+    const seed = Number(params.get('seed') || '7') >>> 0;
+    // Give the page a beat to lay out, then render the scene synchronously.
+    requestAnimationFrame(() => {
+      const ctx = canvas.getContext('2d');
+      runShot(ctx, state, shot, seed);
+    });
+  }
+</script>
+</body>
+</html>
